@@ -1,0 +1,6 @@
+[submodule "conduit"]
+	path = conduit
+	url = https://github.com/functionalperez/conduit.git
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt.git
