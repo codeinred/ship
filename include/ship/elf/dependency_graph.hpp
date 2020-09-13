@@ -1,5 +1,6 @@
 #pragma once
 #include <filesystem>
+#include <ship/elf/is_elf.hpp>
 #include <ship/io/popen_file.hpp>
 #include <ship/io/read_file.hpp>
 #include <ship/pair.hpp>
@@ -72,11 +73,20 @@ auto dependency_graph(std::vector<fs::path> files)
         if (dependencies.contains(key)) {
             continue;
         }
-        auto& target_libraries = dependencies[key];
-        for (auto [libname, path] : libraries(target)) {
-            files.push_back(path);
-            target_libraries.push_back(
-                pair{std::string(libname), std::move(path)});
+        if (fs::is_symlink(target)) {
+            fs::path linkname = fs::read_symlink(target);
+            fs::path path = linkname.is_absolute()
+                                ? linkname
+                                : target.parent_path() / linkname;
+            dependencies[key].push_back(
+                pair{linkname.string(), std::move(path)});
+        } else if (is_elf(target)) {
+            auto& target_libraries = dependencies[key];
+            for (auto [libname, path] : libraries(target)) {
+                files.push_back(path);
+                target_libraries.push_back(
+                    pair{std::string(libname), std::move(path)});
+            }
         }
     }
     return dependencies;
