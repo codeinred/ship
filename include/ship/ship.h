@@ -1,5 +1,6 @@
 #pragma once
 #include <ship/io/popen_file.hpp>
+#include <ship/io/all_exist.hpp>
 #include <ship/pair.hpp>
 
 #include <conduit/generator.hpp>
@@ -10,12 +11,11 @@
 #include <unordered_map>
 #include <vector>
 
+
 namespace ship {
 namespace fs = std::filesystem;
 }
 namespace ship::io {
-// checks that all files in a list of files exist
-auto all_exist(char** files) -> bool;
 
 auto normalize(fs::path const& p) -> fs::path;
 

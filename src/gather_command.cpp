@@ -8,20 +8,12 @@
 using namespace ship;
 
 int gather_command(int argc, char** argv, char** env) {
-    std::vector<fs::path> files;
-    for (int i = 2; i < argc; i++) {
-        files.push_back(argv[i]);
-    }
-    bool any_missing = false;
-    for (auto& path : files) {
-        if (!fs::exists(path)) {
-            fmt::print("Cannot find file: {}\n", path.string());
-            any_missing = true;
-        }
-    }
-    if (any_missing) {
+    if(!io::all_exist(argv + 2, io::print_cannot_find_file)) {
         return 1;
     }
+
+    auto gen = elf::enumerate(argv + 2);
+    std::vector<fs::path> files(begin(gen), end(gen));
 
     fs::path working_dir = fmt::format(
         "/tmp/ship-{}-{}/", getpid(),
