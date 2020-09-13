@@ -1,4 +1,4 @@
-#include <ship/io.h>
+#include <ship/ship.h>
 #include <fmt/core.h>
 
 namespace fs = std::filesystem;
@@ -10,7 +10,7 @@ int measure_command(int argc, char** argv, char** env) {
     bool any_missing = false;
     for(auto& path : files) {
         if(!fs::exists(path)) {
-            fmt::print("Cannot find file: {}", path.string());
+            fmt::print("Cannot find file: {}\n", path.string());
             any_missing = true;
         }
     }

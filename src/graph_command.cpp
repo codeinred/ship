@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <vector>
-#include <ship/io.h>
+#include <ship/ship.h>
 
 using namespace ship;
 namespace fs = std::filesystem;
@@ -14,7 +14,7 @@ int graph_command(int argc, char** argv, char** env) {
     bool any_missing = false;
     for (auto& path : files) {
         if (!fs::exists(path)) {
-            fmt::print("Cannot find file: {}", path.string());
+            fmt::print("Cannot find file: {}\n", path.string());
             any_missing = true;
         }
     }

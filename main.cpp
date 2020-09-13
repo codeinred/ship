@@ -5,10 +5,13 @@
 int graph_command(int argc, char** argv, char** env);
 int usage_command(int argc, char** argv, char** env);
 int measure_command(int argc, char** argv, char** env);
+int gather_command(int argc, char** argv, char** env);
 
 using subcommand_t = int (*)(int, char**, char**);
 
 const std::unordered_map<std::string_view, subcommand_t> subcommands{
+    {"--help", usage_command},
+    {"gather", gather_command},
     {"usage", usage_command},
     {"graph", graph_command},
     {"measure", measure_command}};
