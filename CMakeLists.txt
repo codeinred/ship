@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(conduit CXX)
+project(ship CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -17,7 +17,7 @@ file(GLOB source_files "src/*.cpp")
 
 foreach(file_name ${source_files})
     get_filename_component(source_name ${file_name} NAME_WE)
-    add_library("${source_name}" SHARED "${file_name}")
+    add_library("${source_name}" "${file_name}")
     target_link_libraries("${source_name}" conduit fmt)
     target_link_libraries(ship "${source_name}")
 endforeach()
