@@ -1,6 +1,6 @@
 #pragma once
-#include <ship/pair.hpp>
 #include <ship/io/popen_file.hpp>
+#include <ship/pair.hpp>
 
 #include <conduit/generator.hpp>
 
@@ -11,19 +11,27 @@
 #include <vector>
 
 namespace ship {
-
 namespace fs = std::filesystem;
 }
 namespace ship::io {
-fs::path normalize(fs::path const& p);
+// checks that all files in a list of files exist
+auto all_exist(char** files) -> bool;
 
-conduit::generator<std::string_view> read_file(FILE* file);
-conduit::generator<std::string_view> read_lines(FILE* file);
+auto normalize(fs::path const& p) -> fs::path;
 
-conduit::generator<pair<std::string_view, fs::path>>
-list_libraries(fs::path path);
+auto read_file(FILE* file) -> conduit::generator<std::string_view>;
+auto read_lines(FILE* file) -> conduit::generator<std::string_view>;
+} // namespace ship::io
 
-auto get_dependency_graph(std::vector<fs::path> files)
+namespace ship::elf {
+auto dependency_graph(std::vector<fs::path> files)
     -> std::unordered_map<std::string,
                           std::vector<pair<std::string, fs::path>>>;
-} // namespace ship::io
+
+auto libraries(fs::path path)
+    -> conduit::generator<pair<std::string_view, fs::path>>;
+
+auto is_elf(fs::path const& path) -> bool;
+auto enumerate(fs::path const& paths) -> conduit::generator<fs::path>;
+auto enumerate(char** paths) -> conduit::generator<fs::path>;
+} // namespace ship::elf

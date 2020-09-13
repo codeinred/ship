@@ -6,11 +6,11 @@
 
 #include <fmt/core.h>
 
-namespace ship::io {
+namespace ship {
 namespace fs = std::filesystem;
-
-conduit::generator<pair<std::string_view, fs::path>>
-list_libraries(fs::path path) {
+}
+namespace ship::elf {
+conduit::generator<pair<std::string_view, fs::path>> libraries(fs::path path) {
     io::popen_file ldd_output(fmt::format("ldd '{}'", path.string()));
     for (std::string_view line : io::read_lines(ldd_output.get())) {
         line.remove_prefix(1); // Prefix is 1 byte, a tab
@@ -49,9 +49,9 @@ list_libraries(fs::path path) {
                 throw std::logic_error("Expected libname to be set");
             }
 
-            co_yield {std::string(libname), fs::path(line)};
+            co_yield {libname, fs::path(line)};
         } else {
-            co_yield {std::string(line), fs::path(line)};
+            co_yield {line, fs::path(line)};
         }
     }
     if (ldd_output.close()) {
@@ -59,7 +59,7 @@ list_libraries(fs::path path) {
     }
 }
 
-auto get_dependency_graph(std::vector<fs::path> files)
+auto dependency_graph(std::vector<fs::path> files)
     -> std::unordered_map<std::string,
                           std::vector<pair<std::string, fs::path>>> {
     std::unordered_map<std::string, std::vector<pair<std::string, fs::path>>>
@@ -72,12 +72,13 @@ auto get_dependency_graph(std::vector<fs::path> files)
         if (dependencies.contains(key)) {
             continue;
         }
-        auto& libraries = dependencies[key];
-        for (auto [libname, path] : list_libraries(target)) {
+        auto& target_libraries = dependencies[key];
+        for (auto [libname, path] : libraries(target)) {
             files.push_back(path);
-            libraries.push_back(pair{std::string(libname), std::move(path)});
+            target_libraries.push_back(
+                pair{std::string(libname), std::move(path)});
         }
     }
     return dependencies;
 }
-} // namespace ship::io
+} // namespace ship::elf

@@ -1,7 +1,8 @@
 #include <ship/ship.h>
 #include <fmt/core.h>
 
-namespace fs = std::filesystem;
+using namespace ship;
+
 int measure_command(int argc, char** argv, char** env) {
     std::vector<fs::path> files;
     for(int i = 2; i < argc; i++) {
@@ -18,7 +19,7 @@ int measure_command(int argc, char** argv, char** env) {
         return 1;
     }
 
-    auto graph = ship::io::get_dependency_graph(files);
+    auto graph = elf::dependency_graph(files);
     size_t total_size = 0;
     for(auto& [file, _] : graph) {
         total_size += fs::file_size(file);

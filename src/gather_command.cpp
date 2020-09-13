@@ -35,9 +35,7 @@ int gather_command(int argc, char** argv, char** env) {
 
     fs::current_path(working_dir);
 
-    auto graph = io::get_dependency_graph(files);
-
-
+    auto graph = elf::dependency_graph(files);
 
     return 0;
 }

@@ -4,7 +4,6 @@
 #include <ship/ship.h>
 
 using namespace ship;
-namespace fs = std::filesystem;
 
 int graph_command(int argc, char** argv, char** env) {
     std::vector<fs::path> files;
@@ -22,7 +21,7 @@ int graph_command(int argc, char** argv, char** env) {
         return 1;
     }
 
-    auto graph = io::get_dependency_graph(files);
+    auto graph = elf::dependency_graph(files);
 
     for(auto& [key, value] : graph) {
         for(auto& [_, path] : value) {
