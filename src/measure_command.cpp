@@ -14,7 +14,8 @@ int measure_command(int argc, char** argv, char** env) {
     auto graph = elf::dependency_graph(files);
     size_t total_size = 0;
     for (auto& [file, _] : graph) {
-        total_size += fs::file_size(file);
+        if (!fs::is_symlink(file))
+            total_size += fs::file_size(file);
     }
     fmt::print("Total measure: {} KB\n", total_size / 1024);
     return 0;

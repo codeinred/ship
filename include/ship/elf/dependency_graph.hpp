@@ -56,7 +56,7 @@ conduit::generator<pair<std::string_view, fs::path>> libraries(fs::path path) {
         }
     }
     if (ldd_output.close()) {
-        throw std::logic_error("ldd exited with error");
+        throw std::logic_error(fmt::format("ldd exited with error while reading '{}'", path.string()));
     }
 }
 
@@ -78,6 +78,7 @@ auto dependency_graph(std::vector<fs::path> files)
             fs::path path = linkname.is_absolute()
                                 ? linkname
                                 : target.parent_path() / linkname;
+            files.push_back(path);
             dependencies[key].push_back(
                 pair{linkname.string(), std::move(path)});
         } else if (is_elf(target)) {
